@@ -1,11 +1,20 @@
 version: "3.8"
 services:
-  # backend:
+  backend:
+    image: roeika/plomo-node-gateway:latest
+    ports:
+      - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
+    volumes:
+      #Bind mount
+      - ./backend/api-gateway/src:/app/src
+    env_file:
+      - ./env/api-gateway.env
   frontend:
     image: roeika/plomo-vite:latest
     ports:
       - "3000:3000"
     volumes:
+      #Bind mount
       - ./frontend/src:/app/src
     stdin_open: true
     tty: true
