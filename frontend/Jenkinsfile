@@ -1,6 +1,6 @@
 pipeline {
   agent any
-  options { timestamps(); ansiColor('xterm') }
+  options { timestamps() }
 
   environment {
     DOCKERHUB_CREDENTIALS = 'dockerhub-creds'
@@ -19,7 +19,6 @@ pipeline {
       }
     }
 
-    // Always test the frontend
     stage('Test FE') {
       steps {
         dir('frontend') {
@@ -31,14 +30,10 @@ pipeline {
       }
     }
 
-    // Only push if: (a) dev/main AND (b) frontend/** changed
     stage('Push FE image') {
       when {
         allOf {
-          anyOf {
-            branch 'dev'
-            branch 'main'
-          }
+          anyOf { branch 'dev'; branch 'main' }
           changeset pattern: "frontend/**", comparator: "ANT"
         }
       }
