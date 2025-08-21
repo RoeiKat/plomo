@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+     docker {
+      image "node:${env.NODE_VER ?: '22.8.0-slim'}"
+      reuseNode true
+    }
+  }
   options { timestamps() }
 
   environment {
