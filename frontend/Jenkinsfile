@@ -1,31 +1,61 @@
 pipeline {
   agent any
   options { timestamps(); ansiColor('xterm') }
+
   environment {
     DOCKERHUB_CREDENTIALS = 'dockerhub-creds'
-    NS = 'roeika'; IMG = 'plomo-frontend'
+    NS  = 'roeika'
+    IMG = 'plomo-frontend'
   }
-  stages {
-    stage('Checkout'){ steps { checkout scm; script { env.SHA=sh(returnStdout:true,script:"git rev-parse --short HEAD").trim() } } }
 
-    // Always test FE
-    stage('Test FE'){
-      steps { dir('frontend'){ sh 'npm ci && npm test' } }
-      post { always { junit 'frontend/junit.xml'; archiveArtifacts artifacts:'frontend/coverage/**', allowEmptyArchive:true } }
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+        script {
+          env.SHA = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+          echo "Branch=${env.BRANCH_NAME}  SHA=${env.SHA}"
+        }
+      }
     }
 
-    stage('Push FE image'){
-      when { allOf { anyOf { branch 'dev'; branch 'main' }, changeset 'frontend/**' } }
+    // Always test the frontend
+    stage('Test FE') {
+      steps {
+        dir('frontend') {
+          sh '''
+            npm ci
+            npm test
+          '''
+        }
+      }
+    }
+
+    // Only push if: (a) dev/main AND (b) frontend/** changed
+    stage('Push FE image') {
+      when {
+        allOf {
+          anyOf {
+            branch 'dev'
+            branch 'main'
+          }
+          changeset pattern: "frontend/**", comparator: "ANT"
+        }
+      }
       steps {
         script {
-          def base="${NS}/${IMG}"
-          def tags = (env.BRANCH_NAME=='dev') ? ["dev-${env.SHA}","dev-latest"] : ["${env.SHA}","latest"]
+          def base = "${NS}/${IMG}"
+          def tags = (env.BRANCH_NAME == 'dev')
+            ? ["dev-${env.SHA}", "dev-latest"]
+            : ["${env.SHA}", "latest"]
+
           sh """
             docker build -t ${base}:${tags[0]} -f frontend/Dockerfile frontend
             docker tag ${base}:${tags[0]} ${base}:${tags[1]}
           """
+
           docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-            tags.each{ t -> sh "docker push ${base}:${t}" }
+            tags.each { t -> sh "docker push ${base}:${t}" }
           }
         }
       }
