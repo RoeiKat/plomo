@@ -1,0 +1,68 @@
+pipeline {
+  agent any
+  options { timestamps() }
+  parameters {
+    booleanParam(name: 'PUSH_IMAGE', defaultValue: false, description: 'Push Docker image to Docker Hub')
+  }
+
+  environment {
+    DOCKERHUB_CREDENTIALS = 'dockerhub-creds'
+    NS  = 'roeika'
+    IMG = 'plomo-frontend'
+  }
+
+  stages {
+    stage('Init') {
+      steps {
+        script {
+          env.SHA = (env.GIT_COMMIT ?: 'unknown').take(7)
+          echo "Branch=${env.BRANCH_NAME}  SHA=${env.SHA}"
+        }
+      }
+    }
+
+    stage('Test FE') {
+      agent {
+        docker {
+          image 'node:22.8.0-slim'
+          reuseNode true
+        }
+      }
+      steps {
+        dir('frontend') {
+          sh '''
+            if [ -f package-lock.json ]; then npm ci; else npm install; fi
+            npm test
+          '''
+        }
+      }
+    }
+
+    stage('Push FE image') {
+      when {
+        allOf {
+          anyOf { branch 'dev'; branch 'main' }
+          changeset pattern: "frontend/**", comparator: "ANT"
+          expression { return params.PUSH_IMAGE as boolean } // <-- checkbox gate
+        }
+      }
+      steps {
+        script {
+          def base = "${NS}/${IMG}"
+          def tags = (env.BRANCH_NAME == 'dev')
+            ? ["dev-${env.SHA}", "dev-latest"]
+            : ["${env.SHA}", "latest"]
+
+          sh """
+            docker build -t ${base}:${tags[0]} -f frontend/Dockerfile frontend
+            docker tag ${base}:${tags[0]} ${base}:${tags[1]}
+          """
+
+          docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+            tags.each { t -> sh "docker push ${base}:${t}" }
+          }
+        }
+      }
+    }
+  }
+}
