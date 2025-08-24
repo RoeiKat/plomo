@@ -1,6 +1,9 @@
 pipeline {
   agent any
   options { timestamps() }
+  parameters {
+    booleanParam(name: 'PUSH_IMAGE', defaultValue: false, description: 'Push Docker image to Docker Hub')
+  }
 
   environment {
     DOCKERHUB_CREDENTIALS = 'dockerhub-creds'
@@ -21,7 +24,7 @@ pipeline {
     stage('Test FE') {
       agent {
         docker {
-          image 'node:22.8.0-slim' 
+          image 'node:22.8.0-slim'
           reuseNode true
         }
       }
@@ -40,6 +43,7 @@ pipeline {
         allOf {
           anyOf { branch 'dev'; branch 'main' }
           changeset pattern: "frontend/**", comparator: "ANT"
+          expression { return params.PUSH_IMAGE as boolean } // <-- checkbox gate
         }
       }
       steps {
