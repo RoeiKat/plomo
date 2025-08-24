@@ -6,7 +6,7 @@ import { Card } from "../Card";
 import { initialData } from "../initialData";
 
 describe("Card", () => {
-  it("edits and deletes", () => {
+  it("edits and deletes (asserts store state)", () => {
     const store = configureStore({
       reducer: { kanban: kanbanReducer },
       preloadedState: { kanban: initialData },
@@ -23,9 +23,14 @@ describe("Card", () => {
     const input = screen.getByDisplayValue(card.title);
     fireEvent.change(input, { target: { value: "Updated title" } });
     fireEvent.keyDown(input, { key: "Enter" });
-    expect(screen.getByText("Updated title")).toBeInTheDocument();
+
+    // Check Redux state changed
+    expect(store.getState().kanban.cards[card.id].title).toBe("Updated title");
 
     fireEvent.click(screen.getByLabelText("Delete card"));
-    expect(screen.queryByText("Updated title")).not.toBeInTheDocument();
+
+    const state = store.getState().kanban;
+    expect(state.cards[card.id]).toBeUndefined();
+    expect(state.columns["col-1"].cardIds).not.toContain(card.id);
   });
 });
