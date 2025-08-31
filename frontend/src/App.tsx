@@ -5,7 +5,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="p-4 md:p-6 flex-1">
+      <main className="mt-4 p-4 md:p-6 flex-1">
         <KanbanBoard />
       </main>
     </div>

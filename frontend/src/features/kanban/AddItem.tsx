@@ -22,7 +22,7 @@ export function AddItem({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full text-left text-sm px-3 py-2 rounded-md bg-slate-100 hover:bg-slate-200"
+        className="w-full text-center font-semibold text-sm px-3 py-2 rounded-md  hover:bg-gray-300 hover:text-black hover:border-solid transition-all border border-dashed"
       >
         + {placeholder}
       </button>
@@ -39,12 +39,12 @@ export function AddItem({
           if (e.key === "Enter") submit();
         }}
         placeholder={placeholder}
-        className="w-full px-3 py-2 rounded-md border border-slate-300 bg-white"
+        className="mt-1 w-full px-3 py-2 rounded-md border border-slate-300 bg-column-list"
       />
       <div className="flex gap-2">
         <button
           onClick={submit}
-          className="px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm"
+          className="px-3 py-1.5 rounded-md btn-plomo-primary text-white text-sm"
         >
           Add
         </button>

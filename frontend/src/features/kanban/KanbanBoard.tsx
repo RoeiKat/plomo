@@ -102,7 +102,7 @@ export function KanbanBoard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto ">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -128,7 +128,7 @@ export function KanbanBoard() {
             })}
             <div className="w-80 flex-shrink-0">
               <AddItem
-                placeholder="Add column"
+                placeholder="Add a new List"
                 onAdd={(t) => dispatch(addColumn(t))}
               />
             </div>
