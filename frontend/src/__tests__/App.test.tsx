@@ -10,7 +10,7 @@ describe("App", () => {
         <App />
       </Provider>
     );
-    expect(screen.getByText(/Plomo • Kanban/i)).toBeInTheDocument();
+    expect(screen.getByText(/Plomo/i)).toBeInTheDocument();
     expect(screen.getByText("To Do")).toBeInTheDocument();
   });
 });

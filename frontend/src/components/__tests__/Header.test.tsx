@@ -3,8 +3,8 @@ import { Header } from "../Header";
 
 it("shows app title and tech hint", () => {
   render(<Header />);
-  expect(screen.getByText(/Plomo • Kanban/i)).toBeInTheDocument();
+  expect(screen.getByText(/Plomo/i)).toBeInTheDocument();
   expect(
-    screen.getByText(/Dummy data • Redux • dnd-kit • Tailwind/i)
+    screen.getByText(/Dummy data • Browser Caching • Kanban/i)
   ).toBeInTheDocument();
 });

@@ -33,15 +33,17 @@ describe("Column", () => {
   it("renders its cards", () => {
     const store = makeStore({ kanban: initialData as KanbanState });
     renderColumn(store);
-    expect(screen.getByText(/Set up Redux store/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Redux store as state management/i)
+    ).toBeInTheDocument();
   });
 
   it("adds a card", () => {
     const store = makeStore({ kanban: initialData as KanbanState });
     const { rerender } = renderColumn(store);
 
-    fireEvent.click(screen.getByText("+ Add card"));
-    const input = screen.getByPlaceholderText("Add card");
+    fireEvent.click(screen.getByText("+ Add Task"));
+    const input = screen.getByPlaceholderText("Add Task");
     fireEvent.change(input, { target: { value: "New card" } });
     fireEvent.keyDown(input, { key: "Enter" });
 

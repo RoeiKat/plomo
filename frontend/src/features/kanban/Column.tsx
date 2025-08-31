@@ -63,9 +63,13 @@ export function Column({
   const { setNodeRef } = useDroppable({ id: column.id });
 
   return (
+    // <div
+    //   ref={setNodeRef}
+    //   className="w-80 flex-shrink-0 bg-slate-100/60 rounded-2xl p-3 space-y-3 border border-slate-200"
+    // >
     <div
       ref={setNodeRef}
-      className="w-80 flex-shrink-0 bg-slate-100/60 rounded-2xl p-3 space-y-3 border border-slate-200"
+      className="w-80 flex-shrink-0 bg-column-list rounded-md p-3 space-y-3"
     >
       <div className="flex items-center justify-between gap-2">
         {editing ? (
@@ -81,22 +85,28 @@ export function Column({
             onKeyDown={(e) =>
               e.key === "Enter" && (e.target as HTMLInputElement).blur()
             }
-            className="px-2 py-1 rounded-md border border-slate-300 bg-white text-sm w-full"
+            className="px-2 py-1 rounded-md border border-slate-300 bg-column-list-items text-sm w-full"
           />
         ) : (
           <h2
-            className="font-semibold tracking-tight text-slate-800"
+            className="font-semibold tracking-tight flex-1 min-w-0 break-words whitespace-normal leading-tight"
             onClick={() => setEditing(true)}
           >
             {column.title}
+            <span className="bg-column-list-items mx-2 p-2 rounded-md text-sm">
+              {column.cardIds.length}
+            </span>
           </h2>
         )}
         <button
           aria-label="Delete column"
-          className="text-slate-500 hover:text-red-600"
+          className="svg-btn hover:bg-red-300 transition-all rounded-md p-1"
           onClick={() => dispatch(deleteColumn({ id: column.id }))}
         >
-          🗑️
+          <img
+            src="https://res.cloudinary.com/dm20uwmki/image/upload/v1756643444/delete-1487-svgrepo-com_oup3w7.svg"
+            alt="deleteColumn"
+          />
         </button>
       </div>
 
@@ -117,7 +127,7 @@ export function Column({
       </SortableContext>
 
       <AddItem
-        placeholder="Add card"
+        placeholder="Add Task"
         onAdd={(t) => dispatch(addCard(column.id, t))}
       />
     </div>
