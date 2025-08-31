@@ -4,6 +4,30 @@
 
 :root {
   --card: #ffffff;
+  /* background-color: #fafaff; */
+  background-color: #151218;
+  font-family: "Poppings", sans-serif;
+  color: #fafaff;
+}
+
+.bg-column-list {
+  background-color: #3f3d45;
+}
+.bg-column-list-items {
+  background-color: #56545e;
+}
+
+.bg-card-task {
+  background-color: #151218;
+}
+
+.btn-plomo-primary {
+  background-color: #908ada;
+}
+
+.svg-btn {
+  height: 28px;
+  width: 28px;
 }
 
 .scrollbar-thin::-webkit-scrollbar {

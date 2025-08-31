@@ -21,8 +21,8 @@ describe("KanbanBoard", () => {
         <KanbanBoard />
       </Provider>
     );
-    fireEvent.click(screen.getByText("+ Add column"));
-    const input = screen.getByPlaceholderText("Add column");
+    fireEvent.click(screen.getByText("+ Add a new List"));
+    const input = screen.getByPlaceholderText("Add a new List");
     fireEvent.change(input, { target: { value: "Testing" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
     expect(screen.getByText("Testing")).toBeInTheDocument();
